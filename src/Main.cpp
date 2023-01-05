@@ -3,20 +3,28 @@
 int main()
 {
 	util::Platform platform;
-
 	sf::RenderWindow window;
-	// in Windows at least, this must be called before creating the window
+
 	float screenScalingFactor = platform.getScreenScalingFactor(window.getSystemHandle());
-	// Use the screenScalingFactor
-	window.create(sf::VideoMode(200.0f * screenScalingFactor, 200.0f * screenScalingFactor), "Gemini");
-	platform.setIcon(window.getSystemHandle());
+	auto image = sf::Image {};
 
-	sf::CircleShape shape(window.getSize().x / 2);
-	shape.setFillColor(sf::Color::White);
+	image.loadFromFile("content/icon.png");
 
-	sf::Texture shapeTexture;
-	shapeTexture.loadFromFile("content/sfml.png");
-	shape.setTexture(&shapeTexture);
+	window.create(sf::VideoMode(1000.0f * screenScalingFactor, 1000.0f * screenScalingFactor), "Gemini");
+	window.setIcon(image.getSize().x, image.getSize().y, image.getPixelsPtr());
+
+	sf::Texture playerTexture;
+	playerTexture.setSmooth(true);
+	playerTexture.loadFromFile("content/player.png");
+
+	sf::Sprite player;
+	player.setPosition(100.f, 0.f);
+	player.scale(0.1f, 0.1f);
+	player.setRotation(90.f);
+	player.setTexture(playerTexture);
+
+	//sf::FloatRect boundingBox = player.getGlobalBounds();
+	//sf::Vector2f point = { 100.f, 100.f };
 
 	sf::Event event;
 
@@ -28,8 +36,24 @@ int main()
 				window.close();
 		}
 
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+		{
+			player.move(-.1, 0);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+		{
+			player.move(.1, 0);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+		{
+			player.move(0, -.1);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+		{
+			player.move(0, .1);
+		}
 		window.clear();
-		window.draw(shape);
+		window.draw(player);
 		window.display();
 	}
 
